@@ -2,11 +2,6 @@
 
 namespace registry
 {
-	NTSTATUS open_key( HKEY root_key, const std::wstring_view& key_path, std::uint32_t permission, HKEY& registry_key )
-	{	
-		return RegOpenKeyExW( root_key, key_path.data(), 0, permission, &registry_key );
-	}
-
 	std::string get_string_key( HKEY registry_key, const std::string_view& subkey, const std::string_view& value )
 	{
 		DWORD data_size{};
@@ -21,7 +16,7 @@ namespace registry
 		);
 		
 		if ( status != ERROR_SUCCESS )
-			throw std::runtime_error{ "Unable to read registry string key" };
+			throw registry_error{ "Unable to read registry string key (try dragging RobloxStudioBeta.exe onto this file (this error shouldnt happen)", status };
 
 		DWORD string_lenth_in_chars = data_size / sizeof( char );
 
@@ -39,7 +34,7 @@ namespace registry
 		);
 
 		if ( status != ERROR_SUCCESS )
-			throw std::runtime_error{ "Unable to read registry string key" };
+			throw registry_error{ "Unable to read registry string key (try dragging RobloxStudioBeta.exe onto this file (this error shouldnt happen)", status };
 		
 		// null termination potentially
 		data.resize( string_lenth_in_chars );

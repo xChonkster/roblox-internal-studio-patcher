@@ -4,11 +4,16 @@
 #include "./registry/registry.hpp"
 #include "./memory/memory.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
 	try
 	{
-		const auto roblox_studio_path = registry::get_string_key( HKEY_CLASSES_ROOT, "\\roblox-studio\\DefaultIcon", "" );
+		std::string roblox_studio_path{};
+
+		if ( argc > 1 )
+			roblox_studio_path = argv[1];
+		else
+			roblox_studio_path = registry::get_string_key( HKEY_CLASSES_ROOT, "\\roblox-studio\\DefaultIcon", "" );
 
 		std::printf( "path: %s\n", roblox_studio_path.c_str() );
 
@@ -16,7 +21,7 @@ int main()
 		std::fstream studio{ roblox_studio_path, std::ios::binary | std::ios::in | std::ios::out | std::ios::ate };
 		
 		if ( !studio.is_open() )
-			throw std::runtime_error{ "Unable to open studio file" };
+			throw std::runtime_error{ "Unable to open studio file (you dont have studio installed, or you have studio installed in program files(run as admin)" };
 
 		std::streampos file_size = studio.tellg();
 		studio.seekg( 0, std::ios::beg );
@@ -27,6 +32,9 @@ int main()
 		studio.read( reinterpret_cast<char*>( file_buffer ), file_size );
 
 		const auto scan_write_zero_to_flag = memory::aob_scan( file_buffer, file_size, "xxxxxxxxxxxxxxxx", { 0xC6, 0x05, 0x1F, 0x26, 0xFC, 0x04, 0x00, 0x48, 0x8D, 0x0D, 0x1E, 0x26, 0xFC, 0x04, 0xE8, 0xB9 } );
+
+		if ( scan_write_zero_to_flag.empty() )
+			throw std::runtime_error{ "Sig not matched (image is already patched, or aob is outdated)" };
 
 		// change write 0 to write 1
 		*reinterpret_cast<std::uint8_t*>( file_buffer + scan_write_zero_to_flag[0] + 6 ) = 0x01;
@@ -52,11 +60,22 @@ int main()
 		// write buffer back into file
 		studio.write( reinterpret_cast<char*>( file_buffer ), file_size );
 		
+		// obv
+		operator delete( file_buffer );
+
 		// done!
+	}
+	catch ( registry::registry_error& exception )
+	{
+		std::printf( "Registry error! %s (error_code: %d)\n", exception.what(), exception.get_error_code() );
+
+		system( "PAUSE" );
 	}
 	catch ( std::runtime_error& exception )
 	{
-		std::printf( "ERROR! %s\n", exception.what() );
+		std::printf( "Error! %s\n", exception.what() );
+
+		system( "PAUSE" );
 	}
 }
-
+ 
