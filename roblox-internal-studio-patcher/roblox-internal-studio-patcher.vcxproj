@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\memory\memory.cpp" />
+    <ClCompile Include="src\registry\registry.cpp" />
     <ClCompile Include="src\roblox-internal-studio-patcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\memory\memory.hpp" />
+    <ClInclude Include="src\registry\registry.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

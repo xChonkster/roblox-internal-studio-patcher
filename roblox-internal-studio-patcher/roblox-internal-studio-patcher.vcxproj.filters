@@ -3,8 +3,10 @@
   <ItemGroup>
     <ClCompile Include="src\roblox-internal-studio-patcher.cpp" />
     <ClCompile Include="src\memory\memory.cpp" />
+    <ClCompile Include="src\registry\registry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\memory\memory.hpp" />
+    <ClInclude Include="src\registry\registry.hpp" />
   </ItemGroup>
 </Project>

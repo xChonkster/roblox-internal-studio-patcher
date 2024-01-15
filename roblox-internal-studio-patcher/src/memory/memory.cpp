@@ -18,7 +18,7 @@ namespace memory
 					else
 						continue;
 				}
-				else if ( index == ( mask.length() - 1 ) ) // we reached the end of the mask, and this byte matches, we have a match!
+				else if ( index == ( mask.length() - 1 ) ) // we reached the end of the mask, and if this byte matches, we have a match!
 				{
 					results.push_back( static_cast<std::uintptr_t>( ptr - file_buffer ) );
 
